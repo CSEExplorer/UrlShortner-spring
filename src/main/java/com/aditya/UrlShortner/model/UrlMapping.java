@@ -1,6 +1,6 @@
 package com.aditya.UrlShortner.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -25,7 +25,7 @@ public class UrlMapping {
 
 	private String shortCode; // Unique short string like "abc123"
 
-	private Date createdAt;
+	private LocalDateTime createdAt;
 
 	private int clickCount;
 

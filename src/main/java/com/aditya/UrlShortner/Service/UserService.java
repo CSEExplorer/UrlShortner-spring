@@ -18,7 +18,7 @@ public class UserService {
 
 	public User registerUser(UserRegistrationRequest request) {
 		// 1. Check if user/email exists
-		if (userRepository.findByEmail(request.getEmail()) != null) {
+		if (userRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new RuntimeException("Email already in use");
 		}
 

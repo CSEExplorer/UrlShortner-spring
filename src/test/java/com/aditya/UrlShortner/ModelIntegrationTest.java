@@ -3,7 +3,7 @@ package com.aditya.UrlShortner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class ModelIntegrationTest {
 
 		// 2. Create and save a shortened URL
 		UrlMapping url = UrlMapping.builder().originalUrl("https://example.com").shortCode("abc123")
-				.createdAt(new Date()).clickCount(0).createdBy(savedUser).build();
+				.createdAt(LocalDateTime.now()).clickCount(0).createdBy(savedUser).build();
 
 		UrlMapping savedUrl = urlMappingRepository.save(url);
 		assertNotNull(savedUrl.getId());

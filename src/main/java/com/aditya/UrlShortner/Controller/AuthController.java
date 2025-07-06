@@ -2,6 +2,7 @@ package com.aditya.UrlShortner.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +38,8 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-		User user = userRepository.findByEmail(request.getEmail());
+		User user = userRepository.findByEmail(request.getEmail())
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + request.getEmail()));
 		if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			return ResponseEntity.status(401).body("Invalid credentials");
 		}
