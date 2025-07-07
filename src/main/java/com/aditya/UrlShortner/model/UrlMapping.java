@@ -26,6 +26,7 @@ public class UrlMapping {
 	private String shortCode; // Unique short string like "abc123"
 
 	private LocalDateTime createdAt;
+	private LocalDateTime lastVisited;
 
 	private int clickCount;
 

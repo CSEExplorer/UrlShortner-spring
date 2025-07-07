@@ -1,6 +1,7 @@
 package com.aditya.UrlShortner.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.aditya.UrlShortner.Repository.UrlMappingRepository;
 import com.aditya.UrlShortner.Repository.UserRepository;
+import com.aditya.UrlShortner.dto.UrlStatsDTO;
 import com.aditya.UrlShortner.model.UrlMapping;
 import com.aditya.UrlShortner.model.User;
 
@@ -36,8 +38,29 @@ public class URLShortenerService {
 	}
 
 	public String getLongUrl(String shortCode) {
-		return urlMappingRepository.findByShortCode(shortCode).map(UrlMapping::getOriginalUrl)
-				.orElseThrow(() -> new RuntimeException("URL not found"));
+		UrlMapping mapping = urlMappingRepository.findByShortCode(shortCode)
+				.orElseThrow(() -> new RuntimeException("Short URL not found"));
+
+		// ✅ Analytics updates
+		mapping.setClickCount(mapping.getClickCount() + 1);
+		mapping.setLastVisited(LocalDateTime.now());
+
+		urlMappingRepository.save(mapping);
+
+		return mapping.getOriginalUrl();
+	}
+
+	public List<UrlStatsDTO> getUserUrlStats(String userEmail) {
+		// Fetch the user by email or throw if not found
+		User user = userRepository.findByEmail(userEmail)
+				.orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
+
+		// Get all URL mappings created by this user
+		List<UrlMapping> userUrls = urlMappingRepository.findAllByCreatedBy(user);
+
+		// Map each UrlMapping to a UrlStatsDTO
+		return userUrls.stream().map(url -> new UrlStatsDTO(url.getShortCode(), url.getOriginalUrl(),
+				url.getClickCount(), url.getLastVisited(), url.getCreatedAt())).toList();
 	}
 
 	private String generateUniqueCode() {
