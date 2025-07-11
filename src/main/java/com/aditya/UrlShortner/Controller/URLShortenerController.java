@@ -34,7 +34,7 @@ public class URLShortenerController {
 		String longUrl = request.get("longUrl");
 		String userId = principal.getName();
 		String userEmail = principal.getName();
-		if (!rateLimiterService.isAllowed(userEmail, 10)) {
+		if (!rateLimiterService.isAllowed(userEmail, 5)) {
 			return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("⛔ Rate limit exceeded. Try again later.");
 		}
 

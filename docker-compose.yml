@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"        # Expose Redis port to host (optional for dev)
+    networks:
+      - app-network
+
+  springboot:
+    build: .
+    container_name: springboot-app
+    ports:
+      - "8080:8080"        # Map app port to host
+    depends_on:
+      - redis              # Wait for Redis to be ready
+    environment:
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
